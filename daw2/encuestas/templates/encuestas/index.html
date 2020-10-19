@@ -1,0 +1,25 @@
+{% load static %}
+<head>
+    <link rel="stylesheet" href="{% static 'encuestas/style.css' %}">
+</head>
+
+<body>
+{% if lista_ultimas_preguntas %}
+    <ul>
+    {% for pregunta in lista_ultimas_preguntas %}
+        <li>
+            <a href="{% url 'encuestas:detalle' pregunta.id %}">{{ pregunta.pregunta_text }}</a>
+            &nbsp;---&nbsp;
+            <strong>Creador:</strong> {{ pregunta.creador.user}}
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <strong>Categorias:</strong>
+            {% for categoria in pregunta.categoria.all %}
+                {{ categoria }}
+            {% endfor %}
+        </li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No hay encuestas disponibles</p>
+{% endif %}
+</body>
