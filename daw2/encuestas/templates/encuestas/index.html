@@ -1,27 +1,64 @@
 {% extends 'base/base.html' %}
+
 {% block activar1 %}
     <li class="nav-item active">
 {% endblock %}
+
 {% block titulo %}
     Encuestas disponibles
 {% endblock %}
+
 {% block contenido %}
-    {% if lista_ultimas_preguntas %}
-        <ul>
+    <table class="table table-sm">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Pregunta</th>
+                <th>Nº Opciones</th>
+                <th>Categorías</th>
+                <th>Fecha Publicación</th>
+                <th>Creador</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if lista_ultimas_preguntas %}
             {% for pregunta in lista_ultimas_preguntas %}
-            <li>
-                <a href="{% url 'encuestas:detalle' pregunta.id %}">{{ pregunta.pregunta_text }}</a>
-                &nbsp;---&nbsp;
-                <strong>Creador:</strong> {{ pregunta.creador.user }}
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <strong>Categorias:</strong>
-                {% for categoria in pregunta.categoria.all %}
-                {{ categoria }}
-                {% endfor %}
-            </li>
-        {% endfor %}
-        </ul>
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>
+                    <a href="{% url 'encuestas:detalle' pregunta.id %}">{{ pregunta.pregunta_text }}</a>
+                </td>
+                <td class="text-center">{{ pregunta.opcion_set.count }}</td>
+                <td>
+                    {% for categoria in pregunta.categoria.all %}
+                        {{ categoria }}
+                    {% endfor %}
+                </td>
+                <td>{{ pregunta.fecha_pub }}</td>
+                <td>{{ pregunta.creador.user }}</td>
+                <td>
+                    {% if user.is_superuser or pregunta.creador.user == user %}
+                        <a class="btn btn-primary btnsm" href="{% url 'encuestas:updatePregunta' pregunta.id %}#modificar">Editar</a>
+                        <a class="btn btn-danger btnsm" href="{% url 'encuestas:deletePregunta' pregunta.id %}">Borrar</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+            {% else %}
+                <h2 class="mt-5">No hay Preguntas</h2>
+            {% endif %}
+        </tbody>
+    </table>
+    <hr id="modificar">
+    {% if pregunta %}
+        <h2 class="mt-5">Modificar Pregunta: {{ pregunta.pregunta_text }}</h2>
     {% else %}
-    <p>No hay encuestas disponibles</p>
+        <h2 class="mt-5">Añadir Pregunta</h2>
     {% endif %}
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Guardar</button>
+    </form>
 {% endblock %}

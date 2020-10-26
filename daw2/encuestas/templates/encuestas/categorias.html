@@ -1,0 +1,48 @@
+{% extends 'base/base.html' %}
+
+{% block activar3 %}
+    <li class="nav-item active">
+{% endblock %}
+
+{% block titulo %}
+ Categorías
+{% endblock %}
+
+{% block contenido %}
+    <table class="table table-sm">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Categoría</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if categorias %}
+                {% for categoria in categorias %}
+                    <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ categoria.categoria_text }}</td>
+                    <td>
+                    <a class="btn btn-primary btnsm" href="{% url 'encuestas:updateCategoria' categoria.id %}#modificar">Editar</a>
+                    <a class="btn btn-danger btnsm" href="{% url 'encuestas:deleteCategoria' categoria.id %}">Borrar</a>
+                    </td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <h2 class="mt-5">No hay Categorías</h2>
+            {% endif %}
+        </tbody>
+    </table>
+    <hr id="modificar">
+    {% if categoria %}
+        <h2 class="mt-5">Modificar Categoría: {{ categoria }}</h2>
+    {% else %}
+        <h2 class="mt-5">Añadir Categoría</h2>
+    {% endif %}
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Guardar</button>
+    </form>
+{% endblock %}

@@ -13,10 +13,27 @@
     <form action="{% url 'encuestas:votar' pregunta.id %}" method="post">
     {% csrf_token %}
     {% for opcion in pregunta.opcion_set.all %}
+        {% if user.is_superuser or pregunta.creador.user == user %}
+            <a style='text-decoration:none;' href="{% url 'encuestas:deleteOpcion' opcion.id %}">
+            <span class="badge badge-danger ml-1">borrar</span>
+            </a>
+            &nbsp;&nbsp;
+        {% endif %}
         <input type="radio" name="opcion" id="opcion{{ forloop.counter }}" value="{{ opcion.id }}">
         <label for="opcion{{ forloop.counter }}">{{ opcion.opcion_text }}</label>
         <br>
     {% endfor %}
     <input type="submit" value="Votar">
     </form>
+    {% if user.is_superuser or pregunta.creador.user == user %}
+    <br><br>
+    <form method="post">
+        {% csrf_token %}
+        <p>
+            <label for="id_opcion_text">Nueva Opción:</label>
+            <input type="text" name="opcion_text" class="formcontrol" maxlength="200" required id="id_opcion_text">
+        </p>
+        <input type="submit" value="Añadir Opción" class="btn btn-success">
+    </form>
+    {% endif %}
 {% endblock %}

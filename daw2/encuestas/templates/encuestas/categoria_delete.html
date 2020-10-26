@@ -1,0 +1,17 @@
+{% extends 'base/base.html' %}
+
+{% block activar3 %}
+    <li class="nav-item active">
+{% endblock %}
+
+{% block titulo %}
+    <h3 class="mt-5">¿Desea eliminar la categoría: {{ categoria }}?</h3>
+{% endblock %}
+
+{% block contenido %}
+    <form method="post">
+        {% csrf_token %}
+        <button class="btn btn-danger" type="submit">Si, eliminar</button>
+        <a class="btn btn-default" href="{% url 'encuestas:categoria' %}">Cancelar</a>
+    </form>
+{% endblock %}
