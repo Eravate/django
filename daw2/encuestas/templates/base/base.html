@@ -36,34 +36,48 @@
   <body class="d-flex flex-column h-100">
     {% block header %}
     <header>
-  <!-- Fixed navbar -->
-  <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-    <a class="navbar-brand" href="#">Encuestas</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarCollapse">
-      <ul class="navbar-nav mr-auto">
-        {% block activar1 %}
-        <li class="nav-item active">
-        {% endblock %}
-          <a class="nav-link" href="#">Preguntas</a>
-        </li>
-        {% block activar2 %}
-        <li class="nav-item">
-        {% endblock %}
-          <a class="nav-link" href="#">Usuarios</a>
-        </li>
-        {% block activar3 %}
-        <li class="nav-item">
-        {% endblock %}
-          <a class="nav-link" href="#">Categorías</a>
-        </li>
-      </ul>
-    </div>
-  </nav>
-</header>
-{% endblock %}
+    <!-- Fixed navbar -->
+    {% if user.is_authenticated %}
+        <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+            <a class="navbar-brand" href="{% url 'encuestas:login' %}">Encuestas</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse"
+                    data-target="#navbarCollapse" aria-controls="navbarCollapse"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <ul class="navbar-nav mr-auto">
+                    {% block activar1 %}
+                        <li class="nav-item">
+                    {% endblock %}
+                    <a class="nav-link" href="{% url 'encuestas:index' %}">Preguntas</a>
+                    </li>
+                    {% if user.is_superuser %}
+                        {% block activar2 %}
+                            <li class="nav-item">
+                        {% endblock %}
+                        <a class="nav-link" href="#">Usuarios</a>
+                        </li>
+                        {% block activar3 %}
+                            <li class="nav-item">
+                        {% endblock %}
+                        <a class="nav-link" href="#">Categorías</a>
+                        </li>
+                    {% endif %}
+                </ul>
+                <h4 class="form-inline mt-2 mt-md-0 text-white">
+                    <strong> {{ user }} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</strong>
+                </h4>
+                <form class="form-inline mt-2 mt-md-0" action="{% url 'encuestas:logout' %}"
+                method="get">
+                <button class="btn btn-outline-success my-2 my-sm-0"
+                type="submit">Salir</button>
+                </form>
+            </div>
+        </nav>
+    {% endif %}
+    </header>
+ {% endblock %}
 
 <!-- Begin page content -->
 <main role="main" class="flex-shrink-0">

@@ -3,6 +3,9 @@ from django.template import loader
 from .models import Pregunta, Opcion
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
+from django.contrib.auth.decorators import login_required
+
+@login_required
 def index(request):
     lista_ultimas_preguntas = Pregunta.objects.order_by('-fecha_pub')[:5]
     #output = ','.join([q.pregunta_text for q in lista_ultimas_preguntas])
@@ -16,7 +19,8 @@ def index(request):
     
     contexto = {'lista_ultimas_preguntas':lista_ultimas_preguntas}
     return render(request,'encuestas/index.html',contexto)
-# Create your views here.
+
+@login_required
 def detalle(request, pregunta_id):
     #return HttpResponse("Te encuentras en la pregunta %s" % pregunta_id)
     
@@ -28,10 +32,12 @@ def detalle(request, pregunta_id):
     pregunta = get_object_or_404(Pregunta, pk=pregunta_id)
     return render(request,'encuestas/detalle.html',{'pregunta':pregunta})
 
+@login_required
 def resultados(request, pregunta_id):
     pregunta = get_object_or_404(Pregunta, pk=pregunta_id)
     return render(request,'encuestas/resultados.html',{'pregunta':pregunta})
 
+@login_required
 def votar(request, pregunta_id):
     pregunta = get_object_or_404(Pregunta, pk=pregunta_id)
     try:

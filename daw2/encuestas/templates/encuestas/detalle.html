@@ -1,13 +1,22 @@
-<h1> {{ pregunta.pregunta_text }} </h1>
+{% extends 'base/base.html' %}
 
-{% if mensaje_error %}<p><strong>{{ mensaje_error }}</strong></p>{% endif %}
+{% block activar1 %}
+    <li class="nav-item active">
+{% endblock %}
 
-<form action="{% url 'encuestas:votar' pregunta.id %}" method="post">
-{% csrf_token %}
-{% for opcion in pregunta.opcion_set.all %}
-    <input type="radio" name="opcion" id="opcion{{ forloop.counter }}" value="{{ opcion.id }}">
-    <label for="opcion{{ forloop.counter }}">{{ opcion.opcion_text }}</label>
-    <br><br>
-{% endfor %}
+{% block titulo %}
+    {{ pregunta.pregunta_text }}
+{% endblock %}
+{% block contenido %}
+    <br>
+    {% if mensaje_error %}<p><strong>{{ mensaje_error }}</strong></p>{% endif %}
+    <form action="{% url 'encuestas:votar' pregunta.id %}" method="post">
+    {% csrf_token %}
+    {% for opcion in pregunta.opcion_set.all %}
+        <input type="radio" name="opcion" id="opcion{{ forloop.counter }}" value="{{ opcion.id }}">
+        <label for="opcion{{ forloop.counter }}">{{ opcion.opcion_text }}</label>
+        <br>
+    {% endfor %}
     <input type="submit" value="Votar">
-</form>
+    </form>
+{% endblock %}
