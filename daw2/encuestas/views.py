@@ -1,13 +1,13 @@
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.template import loader
-from .models import Pregunta, Opcion, Categoria
-from django.shortcuts import render, get_object_or_404
+from .models import Pregunta, Opcion, Categoria, User, Usuario
+from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.utils import timezone
 
-from .forms import CategoriaForm, PreguntaForm
+from .forms import CategoriaForm, PreguntaForm, UserForm, UsuarioForm
 
 @login_required
 def categoria_create_read(request):
@@ -137,3 +137,55 @@ def votar(request, pregunta_id):
         opcion_seleccionada.votos += 1
         opcion_seleccionada.save()
         return HttpResponseRedirect(reverse('encuestas:resultados',args=(pregunta_id,)))
+
+@login_required
+def usuarios(request):
+    if not request.user.is_superuser:
+        raise PermissionDenied
+
+    if request.method == 'POST':
+        if request.POST['id_user']:
+            id_user = request.POST['id_user']
+            if 'eliminar' in request.POST:
+                userDelete = User.objects.get(id=id_user)
+                userDelete.delete()
+                return redirect('encuestas:usuarios')
+
+            userUpdate = User.objects.get(id=id_user)
+            user_form = UserForm(request.POST, instance=userUpdate)
+            usuario_form = UsuarioForm(request.POST,instance=userUpdate.usuario)
+            if user_form.is_valid() and usuario_form.is_valid():
+                userUpdate = user_form.save()
+                userUpdate.set_password(userUpdate.password)
+                userUpdate.save()
+                usuario_form.save()
+        else:
+            user_form = UserForm(request.POST)
+            if user_form.is_valid():
+                userAdd = user_form.save() # lo guardamos y recogemos en variable
+                userAdd.set_password(userAdd.password) # cambiamos contraseña
+                userAdd.save()
+                usuario_form = UsuarioForm(request.POST,instance=userAdd.usuario)
+                # obtenemos el usuario del formulario del user guardado anteriormente
+                usuario_form.save()
+        return redirect('encuestas:usuarios')
+    else:
+        usuarios = Usuario.objects.all()
+        contexto = {'usuarios':usuarios}
+        return render(request,'encuestas/usuarios.html',contexto)
+@login_required
+def usuario_form_ajax(request):
+    id_usuario = int(request.GET['id_usuario']) # Lo convierto a entero
+
+    if id_usuario != -1: # Si es una actualizacion
+        usuario = Usuario.objects.get(id=id_usuario)
+        form_user = UserForm(instance=usuario.user)
+        form_usuario = UsuarioForm(instance=usuario)
+        contexto = {'usuario':usuario, 'form_user':form_user, 'form_usuario':form_usuario}
+
+    else:
+        form_user = UserForm()
+        form_usuario = UsuarioForm()
+        contexto = {'form_user':form_user, 'form_usuario':form_usuario}
+
+    return render(request,'encuestas/usuarios_formulario.html',contexto)

@@ -22,5 +22,8 @@ urlpatterns = [
     path('updatePregunta/<int:pregunta_id>', views.pregunta_update, name='updatePregunta'),
     path('deletePregunta/<int:pregunta_id>', views.pregunta_delete, name='deletePregunta'),
     path('deleteOpcion/<int:opcion_id>', views.opcion_delete, name='deleteOpcion'),
+
+    path('usuario/',views.usuarios,name='usuarios'),
+    path('updateUsuarioAjax/',views.usuario_form_ajax,name='UsuarioFormAjax'),
 ]
 

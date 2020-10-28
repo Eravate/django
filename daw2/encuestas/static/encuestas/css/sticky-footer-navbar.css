@@ -18,3 +18,12 @@ main > .container {
 code {
   font-size: 80%;
 }
+
+#conten_form_usuario table th{
+    vertical-align: text-top;
+    padding: 10px;
+}
+
+#conten_form_usuario table td br{
+    display: none;
+}

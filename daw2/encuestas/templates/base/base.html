@@ -7,7 +7,7 @@
     <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
     <meta name="generator" content="Jekyll v3.8.5">
     <title>Encuestas</title>
-
+    <script src="http://code.jquery.com/jquery-3.4.1.min.js"></script>
     <link rel="canonical" href="https://getbootstrap.com/docs/4.3/examples/sticky-footer-navbar/">
 
     <!-- Bootstrap core CSS -->
@@ -54,9 +54,9 @@
                     </li>
                     {% if user.is_superuser %}
                         {% block activar2 %}
-                            <li class="nav-item">
+                        <li class="nav-item">
                         {% endblock %}
-                        <a class="nav-link" href="#">Usuarios</a>
+                            <a class="nav-link" href="{% url 'encuestas:usuarios' %}">Usuarios</a>
                         </li>
                         {% block activar3 %}
                             <li class="nav-item">
@@ -100,6 +100,9 @@
   </div>
 </footer>
 {% endblock %}
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="http://code.jquery.com/jquery-3.4.1.min.js"></script>
       <script src="{% static 'encuestas/js/boostrap.bundle.min.js' %}" ></script></body>
+    {% block js %}     
+    {% endblock %}
+</body>
 </html>

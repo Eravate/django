@@ -1,0 +1,85 @@
+{% extends 'base/base.html' %}
+
+{% block activar2 %}
+    <li class="nav-item active">
+{% endblock %}
+
+{% block titulo %}
+ Usuarios
+{% endblock %}
+
+{% block contenido %}
+    <table class="table table-sm">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Usuario</th>
+                <th>Nombre</th>
+                <th>Apellidos</th>
+                <th>Email</th>
+                <th>Edad</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if usuarios %}
+            {% for usuario in usuarios %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ usuario.user }}</td>
+                <td>{{ usuario.user.first_name }}</td>
+                <td>{{ usuario.user.last_name }}</td>
+                <td>{{ usuario.user.email }}</td>
+                <td>{{ usuario.edad }}</td>
+                <td>
+                    <a data-toggle="modal" data-target="#form_usuario"
+                        class="btn btn-primary btn-sm"
+                        onclick="actualizaUser('{{ usuario.id }}')" href="#">
+                    Editar
+                    </a>
+                    {% if not usuario.user.is_superuser %}
+                        <form method="post" action="{% url 'encuestas:usuarios' %}"
+                 onsubmit="return confirm('¿Deseas eleminar el usuario: {{ usuario.user }}?');"
+                style="display: inline">
+                            {% csrf_token %}
+                            <input type="hidden" name="id_user" value="{{ usuario.user.id }}">
+                            <input type="hidden" name="eliminar" value="1">
+                            <button type="submit" class="btn btn-danger btn-sm">Borrar</button>
+                        </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+            {% else %}
+                <h2 class="mt-5">No hay Usuarios</h2>
+            {% endif %}
+        </tbody>
+    </table>
+    <button type="button" class="btn btn-secondary" data-toggle="modal"
+        data-target="#form_usuario" onclick="actualizaUser(-1)">Añadir Usuario</button>
+
+    <!-- Modal -->
+    <div id="form_usuario" class="modal fade" tabindex="-1" role="dialog"
+        aria-labelledby="form_usuarioTitle" aria-hidden="true">
+        <div id="form_usuario_ajax" class="modal-dialog modal-dialog-centered modal-lg"
+        role="document">
+        </div>
+    </div>
+
+{% endblock %}
+{% block js %}
+    <script>
+        function actualizaUser(id_usuario){
+            $.ajax({
+                data: {'id_usuario':id_usuario},
+                url: "{% url 'encuestas:UsuarioFormAjax' %}",
+                type: 'get',
+                success: function(data) {
+                    $("#form_usuario_ajax").html(data);
+                },
+                error: function(data) {
+                    alert("no datos");
+                },
+            });
+        }
+    </script>
+{% endblock %}

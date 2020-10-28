@@ -1,0 +1,27 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title" id="form_usuarioTitle">
+            {% if usuario %}
+            Modificar Usuario: {{ usuario.user }}
+            {% else %}
+            Añadir Usuario
+            {% endif %}
+        </h5>
+    </div>
+    <form method="post" autocomplete="off">
+        <div id="conten_form_usuario" class="modal-body">
+        {% csrf_token %}
+        <table>
+            {{ form_user.as_table }}
+            {{ form_usuario.as_table }}
+        </table>
+    
+        <input type="hidden" name="id_user" value="{{ usuario.user.id }}">
+    
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+    </form>
+</div>
